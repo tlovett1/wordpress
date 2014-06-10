@@ -1,0 +1,26 @@
+.knotch-pane-wrapper {
+}
+
+.knotch-suggest-topics {
+    float: right;
+}
+
+.knotch-widget-preview {
+    float: right;
+}
+
+.knotch-topic-suggestions .knotch-suggested-topic {
+    margin: 5px 0;
+}
+
+.knotch-topic-suggestions .knotch-suggested-topic input {
+    margin-top: 1px;
+}
+
+.knotch-disable-widget-container {
+    padding-top: 5px;
+}
+
+.knotch-disable-widget-container .knotch-disable-widget {
+    margin-top: 1px;
+}
