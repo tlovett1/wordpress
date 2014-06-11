@@ -44,17 +44,48 @@ class Knotch {
     $postId = $post->ID;
     $disabled = get_post_meta($postId, '_knotch_disable_widget', true);
     $topicName = get_post_meta($postId, '_knotch_topic_name', true);
+    $topicId = get_post_meta($postId, '_knotch_topic_id', true);
 
     $disabledHtml = '';
     if ($disabled) {
       $disabledHtml = ' checked="1"';
     }
 
-    echo '<a class="knotch-suggest-topics button">Suggest Topics</a>';
-    echo '<div class="knotch-widget-preview"></div>';
-    echo '<div class="knotch-topic-suggestions"></div>';
-    echo '<div class="knotch-disable-widget-container"><input type="checkbox" class="knotch-disable-widget" name="knotch_disable_widget" id="knotch-disable-widget" ' . $disabledHtml . ' /><label for="knotch-disable-widget">Don&lsquo;t render a widget</label></div>';
     echo '<input type="hidden" class="knotch-topic-name" name="knotch_topic_name" value="' . esc_attr($topicName) . '" />';
+
+    echo '<div class="knotch-topics-container">';
+    echo '<a class="knotch-suggest-topics button">Suggest Topics</a>';
+    echo '<span class="spinner knotch-loading"></span>';
+
+    echo '<div class="knotch-topic-suggestions">';
+    if ($topicId) {
+      $htmlId = 'knotch-suggested-topic-' . $topicId;
+      echo '<div class="knotch-suggested-topic">';
+      echo '<input type="radio" class="knotch-topic-id-radio" name="knotch_topic_id" value="' . esc_attr($topicId) .
+        '" id="' . $htmlId . '" checked="1">';
+      echo '<label for="' . $htmlId . '">' . $topicName . '</label>';
+      echo '</div>';
+    }
+    echo '</div>'; // End knotch-topic-suggestions
+
+    echo '<div class="knotch-suggested-topic">';
+    $otherText = ($topicName && !$topicId) ? ' value="' . esc_attr($topicName) . '"' : '';
+    $otherChecked = $otherText ? ' checked="1"' : '';
+    echo '<input type="radio" class="knotch-topic-id-radio knotch-other-radio" name="knotch_topic_id" value="other"'.
+      $otherChecked . '>';
+    echo '<input type="text" class="knotch-topic-name-other" name="knotch_topic_name_other"' .
+      $otherText . '>';
+    echo '</div>';
+
+    echo '</div>'; // End knotch-topics-container
+
+    echo '<div class="knotch-widget-preview"></div>';
+
+    echo '<div class="knotch-bottom-shelf-container">';
+    echo '<div class="knotch-bottom-shelf">';
+    echo '<input type="checkbox" class="knotch-disable-widget" name="knotch_disable_widget" id="knotch-disable-widget" ' . $disabledHtml . ' /><label for="knotch-disable-widget">Don&lsquo;t render a widget</label>';
+    echo '</div>';
+    echo '</div>';
   }
 
   public static function addOptionsMenu() {
@@ -171,7 +202,11 @@ class Knotch {
 
     if (isset($_REQUEST['knotch_topic_id']) &&
         isset($_REQUEST['knotch_topic_name']) && $_REQUEST['knotch_topic_name']) {
-      update_post_meta($postId, '_knotch_topic_id', $_REQUEST['knotch_topic_id']);
+      if ($_REQUEST['knotch_topic_id'] == 'other') {
+        delete_post_meta($postId, '_knotch_topic_id');
+      } else {
+        update_post_meta($postId, '_knotch_topic_id', $_REQUEST['knotch_topic_id']);
+      }
       update_post_meta($postId, '_knotch_topic_name', $_REQUEST['knotch_topic_name']);
     }
   }
@@ -185,19 +220,23 @@ class Knotch {
     $topicId = get_post_meta($post->ID, '_knotch_topic_id', true);
     $topicName = get_post_meta($post->ID, '_knotch_topic_name', true);
 
-    if ($topicId && $topicName) {
+    if ($topicName) {
       $permalink = get_permalink($post->ID);
 
       $options = get_option(self::API_OPTIONS_NAME);
 
-      $query = http_build_query(array(
+      $queryData = array(
         'cid' => $options['clientId'],
         'canonicalURL' => $permalink,
-        'topicName' => $topicName,
-        'topicID' => $topicId,
-      ));
+        'topicName' => $topicName
+      );
 
-      $iframeSrc = 'https://www.knotch.it/extern/quickKnotchBox?' . $query;
+      if ($topicId) {
+        $queryData['topicID'] = $topicId;
+      }
+
+      $iframeSrc = 'https://www.knotch.it/extern/quickKnotchBox?' .
+        http_build_query($queryData);
 
       return $content . '<iframe class="knotch-post-widget" frameborder="0" src="' .
         $iframeSrc . '" style="width: 98%; height: 250px"></iframe>';

@@ -1,26 +1,53 @@
-.knotch-pane-wrapper {
+.knotch-topics-container {
+    display: inline-block;
+    margin-right: 50px;
+    vertical-align: top;
+}
+
+#knotch-add-widget span.knotch-loading {
+    float: none;
+    margin-top: 4px;
 }
 
 .knotch-suggest-topics {
-    float: right;
+    margin-bottom: 5px;
 }
 
-.knotch-widget-preview {
-    float: right;
+.knotch-topic-suggestions {
+    margin-top: 5px;
 }
 
 .knotch-topic-suggestions .knotch-suggested-topic {
     margin: 5px 0;
 }
 
-.knotch-topic-suggestions .knotch-suggested-topic input {
+.knotch-topic-suggestions .knotch-suggested-topic input[type="radio"] {
     margin-top: 1px;
 }
 
-.knotch-disable-widget-container {
-    padding-top: 5px;
+.knotch-topic-suggestions .knotch-topic-name-other {
+    font-size: 13px;
+    vertical-align: middle;
 }
 
-.knotch-disable-widget-container .knotch-disable-widget {
+.knotch-widget-preview {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.knotch-bottom-shelf-container {
+    height: 31px;
+}
+
+.knotch-bottom-shelf {
+    border-top: 1px solid #eee;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 6px 12px 9px;
+}
+
+.knotch-bottom-shelf .knotch-disable-widget {
     margin-top: 1px;
 }
