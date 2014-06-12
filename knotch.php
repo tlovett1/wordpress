@@ -156,18 +156,20 @@ class Knotch {
   }
 
   public static function renderClientId() {
+    $options = get_option(self::API_OPTIONS_NAME);
     printf(
       '<input type="text" id="clientId" name="%s" value="%s" class="regular-text" />',
       self::API_OPTIONS_NAME . '[clientId]',
-      get_option(self::API_OPTIONS_NAME)['clientId']
+      $options['clientId']
     );
   }
 
   public static function renderApiSecret() {
+    $options = get_option(self::API_OPTIONS_NAME);
     printf(
       '<input type="text" id="secret" name="%s" value="%s" class="regular-text" />',
       self::API_OPTIONS_NAME . '[secret]',
-      get_option(self::API_OPTIONS_NAME)['secret']
+      $options['secret']
     );
   }
 
