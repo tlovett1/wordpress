@@ -14,7 +14,7 @@ class Knotch {
   const API_OPTIONS_NAME = 'knotch_api_options';
 
   public static function loadPreviewScript($hook) {
-    if ('post.php' != $hook) {
+    if ('post.php' != $hook && 'post-new.php' != $hook) {
       return;
     }
 
@@ -45,6 +45,7 @@ class Knotch {
     $disabled = get_post_meta($postId, '_knotch_disable_widget', true);
     $topicName = get_post_meta($postId, '_knotch_topic_name', true);
     $topicId = get_post_meta($postId, '_knotch_topic_id', true);
+    $promptType = get_post_meta($postId, '_knotch_prompt_type', true);
 
     $disabledHtml = '';
     if ($disabled) {
@@ -75,6 +76,18 @@ class Knotch {
       $otherChecked . '>';
     echo '<input type="text" class="knotch-topic-name-other" name="knotch_topic_name_other"' .
       $otherText . '>';
+    echo '</div>';
+
+    echo '<div class="knotch-prompt-wrapper"><b>Prompt:</b>';
+    echo '<select class="knotch-widget-prompt" name="knotch_prompt_type">';
+    if ($promptType != 'interest') {
+      echo '<option selected="selected" value="default">How do you feel about...</option>';
+      echo '<option value="interest">Are you interested in...</option>';
+    } else {
+      echo '<option value="default">How do you feel about...</option>';
+      echo '<option selected="selected" value="interest">Are you interested in...</option>';
+    }
+    echo '</select>';
     echo '</div>';
 
     echo '</div>'; // End knotch-topics-container
@@ -193,6 +206,7 @@ class Knotch {
         $_REQUEST['knotch_disable_widget']) {
       delete_post_meta($postId, '_knotch_topic_id');
       delete_post_meta($postId, '_knotch_topic_name');
+      delete_post_meta($postId, '_knotch_prompt_type');
       update_post_meta($postId, '_knotch_disable_widget', '1');
       return;
     } else {
@@ -208,6 +222,7 @@ class Knotch {
         update_post_meta($postId, '_knotch_topic_id', $_REQUEST['knotch_topic_id']);
       }
       update_post_meta($postId, '_knotch_topic_name', $_REQUEST['knotch_topic_name']);
+      update_post_meta($postId, '_knotch_prompt_type', $_REQUEST['knotch_prompt_type']);
     }
   }
 
@@ -219,6 +234,7 @@ class Knotch {
 
     $topicId = get_post_meta($post->ID, '_knotch_topic_id', true);
     $topicName = get_post_meta($post->ID, '_knotch_topic_name', true);
+    $promptType = get_post_meta($post->ID, '_knotch_prompt_type', true);
 
     if ($topicName) {
       $permalink = get_permalink($post->ID);
@@ -233,6 +249,13 @@ class Knotch {
 
       if ($topicId) {
         $queryData['topicID'] = $topicId;
+      }
+
+      if ($promptType == 'interest') {
+        $queryData['positiveLabel'] = 'interested';
+        $queryData['negativeLabel'] = 'uninterested';
+        $queryData['prompt'] = 'Are you interested in %t?';
+        $queryData['hoverPrompt'] = 'You are %s in %t';
       }
 
       $iframeSrc = 'https://www.knotch.it/extern/quickKnotchBox?' .

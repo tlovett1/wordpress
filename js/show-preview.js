@@ -1,9 +1,11 @@
 jQuery(document).ready(function() {
   var $ = jQuery;
 
+  var REFRESH_TIME_MS = 30000;
+
   function getEditorContent() {
     if ($('#wp-content-wrap').hasClass('tmce-active')) {
-      return tinyMCE.activeEditor.getContent();
+      return tinyMCE.activeEditor ? tinyMCE.activeEditor.getContent() : null;
     } else {
       return $('#wp-content-wrap .wp-editor-area').val();
     }
@@ -14,7 +16,9 @@ jQuery(document).ready(function() {
     this.customTopicInput = $('.knotch-topic-name-other');
     this.disableButton = $('.knotch-disable-widget');
 
-    this.lastSelected = $('.knotch-topic-id-radio:checked');
+    this.lastSelected = $('.knotch-topic-suggestions .knotch-topic-id-radio:checked');
+    this.lastSelected = this.lastSelected.length ? this.lastSelected : null;
+    this.lastContent = null;
 
     // Initialize listeners
     this.customTopicInput.focus(function(event) {
@@ -30,25 +34,13 @@ jQuery(document).ready(function() {
       }
     }.bind(this));
 
-    $('.knotch-suggest-topics').click(function() {
-      var spinner = this.root.find('.spinner')
-      spinner.css('display', 'inline-block');
-      $.post(ajaxurl, {
-        action: 'knotch_suggest_topic',
-        data: {
-          title: $('#title').val(),
-          textHtml: getEditorContent()
-        }
-      }, function(response) {
-        spinner.hide();
-        this.renderSuggestions(JSON.parse(response));
-      }.bind(this));
-    }.bind(this));
+    $('.knotch-suggest-topics').click(this.fetchSuggestions.bind(this));
 
     $('.knotch-topic-suggestions').on('click', '.knotch-topic-id-radio', function(event) {
       var radiobox = $(event.currentTarget);
       this.lastSelected = radiobox;
       this.updateTopicName(radiobox.parent().text());
+      this.timer && clearTimeout(this.timer);
     }.bind(this));
 
     $('.knotch-other-radio').click(function() {
@@ -59,10 +51,52 @@ jQuery(document).ready(function() {
 
     this.disableButton.change(function() {
       this.setDisabled(this.disableButton[0].checked);
+      this.timer && clearTimeout(this.timer);
     }.bind(this));
+
+    $('.knotch-widget-prompt').change(function(event) {
+      this.updateTopicName(this.lastSelected.parent().text());
+    }.bind(this));
+
+    if (!$('.knotch-topic-id-radio:checked').length &&
+        !this.disableButton[0].checked) {
+      this.startContentListener();
+    }
   }
 
   $.extend(KnotchWidgetEditor.prototype, {
+    startContentListener: function() {
+      this.lastContent = getEditorContent();
+
+      var timerFunction = function() {
+        var content = getEditorContent();
+        if (content != this.lastContent) {
+          this.fetchSuggestions();
+        }
+
+        this.timer = setTimeout(timerFunction, REFRESH_TIME_MS);
+      }.bind(this);
+
+      timerFunction();
+    },
+
+    fetchSuggestions: function(content) {
+      this.lastContent = getEditorContent();
+
+      var spinner = this.root.find('.spinner');
+      spinner.css('display', 'inline-block');
+      $.post(ajaxurl, {
+        action: 'knotch_suggest_topic',
+        data: {
+          title: $('#title').val(),
+          textHtml: this.lastContent
+        }
+      }, function(response) {
+        spinner.hide();
+        this.renderSuggestions(JSON.parse(response));
+      }.bind(this));
+    },
+
     setDisabled: function(disabled) {
       this.disableButton[0].checked = disabled;
 
@@ -84,12 +118,20 @@ jQuery(document).ready(function() {
       $('.knotch-topic-name').val(topicName);
 
       // Show a preview widget
-      var param = $.param({
+      var param = {
         canonicalURL: 'https://www.knotch.it/insight/dashboard/generator',
-        topicName: topicName
-      });
+        topicName: topicName,
+        preview: true
+      };
 
-      var src = 'https://www.knotch.it/extern/quickKnotchBox?' + param;
+      if ($('.knotch-widget-prompt').val() == 'interest') {
+        param.positiveLabel = 'interested';
+        param.negativeLabel = 'uninterested';
+        param.hoverPrompt = 'You are %s in %t';
+        param.prompt = 'Are you interested in %t?';
+      }
+
+      var src = 'https://www.knotch.it/extern/quickKnotchBox?' + $.param(param);
       var iframe = '<iframe frameborder="0" src="' + src + '" style="width: 98% height: 140px">';
 
       $('.knotch-widget-preview').empty().append(iframe);
@@ -98,7 +140,9 @@ jQuery(document).ready(function() {
     onCustomTopicBlur: function(event) {
       var topicName = this.customTopicInput.val().trim();
       if (topicName) {
+        this.setDisabled(false);
         this.updateTopicName(topicName);
+        this.timer && clearTimeout(this.timer);
       } else if (this.lastSelected) {
         this.lastSelected.prop('checked', true);
         this.updateTopicName(this.lastSelected.parent().text());
