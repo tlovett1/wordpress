@@ -36,7 +36,7 @@ class Knotch {
       array('Knotch', 'renderWidgetMetaBox'),
       'post',
       'normal',
-      'default'
+      'high'
     );
   }
 

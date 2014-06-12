@@ -58,7 +58,9 @@ jQuery(document).ready(function() {
       this.updateTopicName(this.lastSelected.parent().text());
     }.bind(this));
 
-    if (!$('.knotch-topic-id-radio:checked').length &&
+    // If our menu is shown AND the user has not selected anything in the past
+    if ($('.knotch-topic-suggestions').is(':visible') &&
+        !$('.knotch-topic-id-radio:checked').length &&
         !this.disableButton[0].checked) {
       this.startContentListener();
     }
