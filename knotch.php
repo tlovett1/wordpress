@@ -1,12 +1,12 @@
 <?php
-	/**
-	 * Plugin Name: Knotch
-	 * Description: Adds the ability to include Knotch widgets. Official Knotch plugin.
-	 * Version: 0.3.0
-	 * Author: Knotch
-	 * Author URI: https://www.knotch.it
-	 * License: GPL2
-	 */
+/**
+ * Plugin Name: Knotch
+ * Description: Adds the ability to include Knotch widgets. Official Knotch plugin.
+ * Version: 0.3.0
+ * Author: Knotch
+ * Author URI: https://www.knotch.it
+ * License: GPL2
+ */
 
 class Knotch {
 	const OPTIONS_GROUP = 'knotch_api_options_group';
@@ -57,6 +57,7 @@ class Knotch {
 		echo '<div class="knotch-topics-container">';
 		echo '<a class="knotch-suggest-topics button">Suggest Topics</a>';
 		echo '<span class="spinner knotch-loading"></span>';
+		echo '<div class="knotch-no-suggestions">No suggested topics. Maybe try adding some tags?</div>';
 
 		echo '<div class="knotch-topic-suggestions">';
 		if ( $topic_id ) {
@@ -179,6 +180,7 @@ class Knotch {
 		$title = $data['title'];
 		$text = strip_tags( $data['textHtml'] );
 		$text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML401 );
+		$tags = $data['tags'];
 
 		$endpoint = 'https://www.knotch.it/insight/suggestTopics';
 
@@ -189,6 +191,7 @@ class Knotch {
 			'body' => array(
 				'title' => $title,
 				'text' => $text,
+				'tags' => $tags,
 				'clientId' => $options['clientId'],
 				'secret' => $options['secret'],
 				'v' => 'wp-0.3.0'

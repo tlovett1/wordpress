@@ -1,7 +1,9 @@
 jQuery( document ).ready(function() {
 	var $ = jQuery;
 
+	var SCORE_CUTOFF = 0.15;
 	var REFRESH_TIME_MS = 30000;
+	var TAG_LISTEN_MS = 1000;
 
 	function getEditorContent() {
 		if ( $( '#wp-content-wrap' ).hasClass( 'tmce-active' ) ) {
@@ -34,13 +36,14 @@ jQuery( document ).ready(function() {
 			}
 		}.bind( this ) );
 
-		$( '.knotch-suggest-topics' ).click( this.fetchSuggestions.bind( this ) );
+		$( '.knotch-suggest-topics' ).click( this.fetchSuggestions.bind( this, true ) );
 
 		$( '.knotch-topic-suggestions' ).on( 'click', '.knotch-topic-id-radio', function( event ) {
 			var radiobox = $( event.currentTarget );
 			this.lastSelected = radiobox;
 			this.updateTopicName( radiobox.parent().text() );
 			this.timer && clearTimeout( this.timer );
+			this.tagTimer && clearTimeout( this.tagTimer );
 		}.bind( this ) );
 
 		$( '.knotch-other-radio' ).click(function() {
@@ -52,6 +55,7 @@ jQuery( document ).ready(function() {
 		this.disableButton.change(function() {
 			this.setDisabled( this.disableButton[0].checked );
 			this.timer && clearTimeout( this.timer );
+			this.tagTimer && clearTimeout( this.tagTimer );
 		}.bind( this ) );
 
 		$( '.knotch-widget-prompt' ).change(function( event ) {
@@ -73,16 +77,29 @@ jQuery( document ).ready(function() {
 			var timerFunction = function() {
 				var content = getEditorContent();
 				if ( content != this.lastContent ) {
-					this.fetchSuggestions();
+					this.fetchSuggestions( false );
 				}
 
 				this.timer = setTimeout( timerFunction, REFRESH_TIME_MS );
 			}.bind( this );
 
+			// Also listen to tag changes -- update immediately if it happens
+			var tagsElem = $( '.the-tags' );
+			this.lastTags = tagsElem.val();
+
+			var tagTimerFunction = function() {
+				if ( this.lastTags != tagsElem.val() ) {
+					this.lastTags = tagsElem.val();
+					this.fetchSuggestions( false );
+				}
+				this.tagTimer = setTimeout( tagTimerFunction, TAG_LISTEN_MS );
+			}.bind( this );
+
 			timerFunction();
+			tagTimerFunction();
 		},
 
-		fetchSuggestions: function( content ) {
+		fetchSuggestions: function( forced ) {
 			this.lastContent = getEditorContent();
 
 			var spinner = this.root.find( '.spinner' );
@@ -91,11 +108,24 @@ jQuery( document ).ready(function() {
 				action: 'knotch_suggest_topic',
 				data: {
 					title: $( '#title' ).val(),
-					textHtml: this.lastContent
+					textHtml: this.lastContent,
+					tags: $( '.the-tags' ).val()
 				}
 			}, function( response ) {
+				var suggestions = JSON.parse ( response );
+
+				suggestions = suggestions.slice( 0, 5 ).filter(function( suggestion ) {
+					return suggestion.score > SCORE_CUTOFF;
+				});
+
 				spinner.hide();
-				this.renderSuggestions( JSON.parse( response ) );
+				this.renderSuggestions( suggestions );
+
+				if ( ! suggestions.length && forced ) {
+						$('.knotch-no-suggestions').show();
+				} else {
+						$('.knotch-no-suggestions').hide();
+				}
 			}.bind( this ) );
 		},
 
@@ -119,6 +149,12 @@ jQuery( document ).ready(function() {
 			// Used for form submission
 			$( '.knotch-topic-name' ).val( topicName );
 
+			$( '.knotch-widget-preview' ).empty();
+
+			if ( ! topicName ) {
+					return;
+			}
+
 			// Show a preview widget
 			var param = {
 				canonicalURL: 'https://www.knotch.it/insight/dashboard/generator',
@@ -136,7 +172,7 @@ jQuery( document ).ready(function() {
 			var src = 'https://www.knotch.it/extern/quickKnotchBox?' + $.param( param );
 			var iframe = '<iframe frameborder="0" src="' + src + '" style="width: 98% height: 140px">';
 
-			$( '.knotch-widget-preview' ).empty().append( iframe );
+			$( '.knotch-widget-preview' ).append( iframe );
 		},
 
 		onCustomTopicBlur: function( event ) {
@@ -145,6 +181,7 @@ jQuery( document ).ready(function() {
 				this.setDisabled( false );
 				this.updateTopicName( topicName );
 				this.timer && clearTimeout( this.timer );
+				this.tagTimer && clearTimeout( this.tagTimer );
 			} else if ( this.lastSelected ) {
 				this.lastSelected.prop( 'checked', true );
 				this.updateTopicName( this.lastSelected.parent().text() );
@@ -155,8 +192,9 @@ jQuery( document ).ready(function() {
 			var root = $( '.knotch-topic-suggestions' );
 
 			var html = '';
-			for ( var ii = 0; ii < suggestions.length && ii < 5; ii++ ) {
+			for ( var ii = 0; ii < suggestions.length; ii++ ) {
 				var suggestion = suggestions[ii];
+
 				var htmlId = 'knotch-suggested-topic-' + suggestion.id;
 
 				var checked = '';

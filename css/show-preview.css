@@ -60,3 +60,8 @@
 .knotch-bottom-shelf .knotch-disable-widget {
 	margin-top: 1px;
 }
+
+.knotch-no-suggestions {
+		display: none;
+		margin: 8px 0;
+}
