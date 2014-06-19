@@ -1,24 +1,100 @@
-.knotch-topics-container {
+.knotch-wrapper {
+	margin: -6px -12px -12px;
+}
+
+.knotch-refresh-wrapper {
+	text-align: center;
+}
+
+.knotch-topic-step {
+	width: 33%;
 	display: inline-block;
-	margin-right: 50px;
 	vertical-align: top;
+	height: 350px;
+	position: relative;
+}
+
+.knotch-prompt-step {
+	width: 27%;
+	display: inline-block;
+	vertical-align: top;
+	height: 350px;
+}
+
+.knotch-center-label {
+	font-weight: bold;
+	text-align: center;
+	margin: 10px 0;
+}
+
+.knotch-preview-step {
+	width: 40%;
+	display: inline-block;
+	vertical-align: top;
+	height: 350px;
+}
+
+.knotch-suggestion-message {
+	margin: 8px 0;
+	font-weight: bold;
+	text-align: center;
+	opacity: 0;
+}
+
+.knotch-step-header {
+	background-color: #2b3940;
+	color: #fff;
+	padding: 8px 0;
+	text-align: center;
+}
+
+.knotch-topics-container {
+	vertical-align: top;
+	width: 220px;
+	margin: 30px auto;
 }
 
 #knotch-add-widget span.knotch-loading {
 	float: none;
 	margin-top: 4px;
+	display: inline-block;
+}
+
+.knotch-loading-block {
+	margin: 0 auto;
+	text-align: center;
+	color: #adadad;
+	position: absolute;
+	top: 130px;
+	left: 0;
+	right: 0;
+	display: none;
+}
+
+.knotch-loading-message {
+	padding: 0 40px;
 }
 
 .knotch-suggest-topics {
 	margin-bottom: 5px;
+	text-align: center;
 }
 
 .knotch-topic-suggestions {
 	margin-top: 5px;
+	height: 130px;
 }
 
 .knotch-topic-suggestions .knotch-suggested-topic {
 	margin: 5px 0;
+}
+
+.knotch-topic-suggestions .knotch-suggested-topic label {
+	max-width: 185px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: inline-block;
 }
 
 .knotch-topic-suggestions .knotch-suggested-topic input[type="radio"] {
@@ -31,12 +107,15 @@
 }
 
 .knotch-widget-preview {
-	display: inline-block;
+	display: block;
+	width: 300px;
+	margin: 70px auto 0;
 	vertical-align: top;
 }
 
 .knotch-prompt-wrapper {
-	margin-top: 10px;
+	margin: 130px auto 0;
+	width: 180px;
 }
 
 .knotch-widget-prompt {
@@ -44,16 +123,8 @@
 	font-size: 12px;
 }
 
-.knotch-bottom-shelf-container {
-	height: 31px;
-}
-
 .knotch-bottom-shelf {
 	border-top: 1px solid #eee;
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
 	padding: 6px 12px 9px;
 }
 
@@ -61,7 +132,3 @@
 	margin-top: 1px;
 }
 
-.knotch-no-suggestions {
-		display: none;
-		margin: 8px 0;
-}

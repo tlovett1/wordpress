@@ -58,7 +58,7 @@ jQuery( document ).ready(function() {
 			this.tagTimer && clearTimeout( this.tagTimer );
 		}.bind( this ) );
 
-		$( '.knotch-widget-prompt' ).change(function( event ) {
+		$( 'input[name="knotch_prompt_type"]' ).click(function( event ) {
 			this.updateTopicName( this.lastSelected.parent().text() );
 		}.bind( this ) );
 
@@ -102,14 +102,21 @@ jQuery( document ).ready(function() {
 		fetchSuggestions: function( forced ) {
 			this.lastContent = getEditorContent();
 
-			var spinner = this.root.find( '.spinner' );
-			spinner.css( 'display', 'inline-block' );
+			$( '.knotch-topic-suggestions' ).empty();
+			$( '.knotch-suggestion-message' ).css('opacity', '0');
+			var loader = this.root.find( '.knotch-loading-block' );
+			$( '.knotch-loading-message' ).text( 'Finding topics' );
+			$( '.knotch-loading' ).show();
+			loader.show();
+
+			var tags = $( '.the-tags' ).val()
+
 			$.post( ajaxurl, {
 				action: 'knotch_suggest_topic',
 				data: {
 					title: $( '#title' ).val(),
 					textHtml: this.lastContent,
-					tags: $( '.the-tags' ).val()
+					tags: tags
 				}
 			}, function( response ) {
 				var suggestions = JSON.parse ( response );
@@ -118,13 +125,22 @@ jQuery( document ).ready(function() {
 					return suggestion.score > SCORE_CUTOFF;
 				});
 
-				spinner.hide();
-				this.renderSuggestions( suggestions );
-
-				if ( ! suggestions.length && forced ) {
-						$('.knotch-no-suggestions').show();
+				if ( suggestions.length ) {
+					loader.hide();
+					this.renderSuggestions( suggestions );
 				} else {
-						$('.knotch-no-suggestions').hide();
+					$( '.knotch-loading-message' ).text( 'Add some tags to your post so we can find the topics for you!' );
+					$( '.knotch-loading' ).hide();
+				}
+
+				if ( suggestions.length ) {
+					$( '.knotch-suggestion-message' ).css( 'opacity', '1' );
+				}
+
+				if ( tags ) {
+					$( '.knotch-suggestion-message' ).text( 'Here are some relevant topics' );
+				} else {
+					$( '.knotch-suggestion-message' ).text( 'We think these topics are relevant. Add some tags & we\'ll do better!' );
 				}
 			}.bind( this ) );
 		},
@@ -162,7 +178,7 @@ jQuery( document ).ready(function() {
 				preview: true
 			};
 
-			if ( $( '.knotch-widget-prompt' ).val() === 'interest' ) {
+			if ( $( 'input[name="knotch_prompt_type"]:checked' ).val() === 'interest' ) {
 				param.positiveLabel = 'interested';
 				param.negativeLabel = 'uninterested';
 				param.hoverPrompt = 'You are %s in %t';
@@ -170,7 +186,7 @@ jQuery( document ).ready(function() {
 			}
 
 			var src = 'https://www.knotch.it/extern/quickKnotchBox?' + $.param( param );
-			var iframe = '<iframe frameborder="0" src="' + src + '" style="width: 98% height: 140px">';
+			var iframe = '<iframe frameborder="0" src="' + src + '" style="width: 300px; height: 140px">';
 
 			$( '.knotch-widget-preview' ).append( iframe );
 		},

@@ -52,12 +52,20 @@ class Knotch {
 			$disabled_html = ' checked="1"';
 		}
 
+		echo '<div class="knotch-wrapper">';
+
 		echo '<input type="hidden" class="knotch-topic-name" name="knotch_topic_name" value="' . esc_attr( $topic_name ) . '" />';
 
+		echo '<div class="knotch-topic-step">';
+		echo '<div class="knotch-step-header">1. <strong>Select a topic:</strong></div>';
+
 		echo '<div class="knotch-topics-container">';
-		echo '<a class="knotch-suggest-topics button">Suggest Topics</a>';
+		echo '<div class="knotch-loading-block">';
+
+		echo '<div class="knotch-loading-message">Finding topics</div>';
 		echo '<span class="spinner knotch-loading"></span>';
-		echo '<div class="knotch-no-suggestions">No suggested topics. Maybe try adding some tags?</div>';
+		echo '</div>';
+		echo '<div class="knotch-suggestion-message">Here are some relevant topics</div>';
 
 		echo '<div class="knotch-topic-suggestions">';
 		if ( $topic_id ) {
@@ -70,36 +78,56 @@ class Knotch {
 		}
 		echo '</div>'; // End knotch-topic-suggestions
 
+		echo '<div class="knotch-refresh-wrapper"><a class="knotch-suggest-topics button">Refresh</a></div>';
+
 		echo '<div class="knotch-suggested-topic">';
 		$other_text = ( $topic_name && ! $topic_id ) ? ' value="' . esc_attr( $topic_name ) . '"' : '';
 		$other_checked = $other_text ? ' checked="1"' : '';
+		echo '<div class="knotch-center-label">Or create your own...</div>';
 		echo '<input type="radio" class="knotch-topic-id-radio knotch-other-radio" name="knotch_topic_id" value="other"'.
 			$other_checked . '>';
 		echo '<input type="text" class="knotch-topic-name-other" name="knotch_topic_name_other"' .
 			$other_text . '>';
 		echo '</div>';
 
-		echo '<div class="knotch-prompt-wrapper"><b>Prompt:</b>';
-		echo '<select class="knotch-widget-prompt" name="knotch_prompt_type">';
-		if ( $prompt_type != 'interest' ) {
-			echo '<option selected="selected" value="default">How do you feel about...</option>';
-			echo '<option value="interest">Are you interested in...</option>';
-		} else {
-			echo '<option value="default">How do you feel about...</option>';
-			echo '<option selected="selected" value="interest">Are you interested in...</option>';
+		echo '</div>'; // End knotch-topics-container
+		echo '</div>'; // End step 1
+
+		echo '<div class="knotch-prompt-step">';
+		echo '<div class="knotch-step-header">2. <strong>Choose a prompt:</strong></div>';
+
+		echo '<div class="knotch-prompt-wrapper">';
+
+		$default_selected = ' checked="checked"';
+		$interest_selected = '';
+		if ( $prompt_type == 'interest' ) {
+			$default_selected = '';
+			$interest_selected = ' checked="checked"';
 		}
-		echo '</select>';
+		echo '<div>';
+		echo '<input type="radio" id="knotch-prompt-default" name="knotch_prompt_type" value="default"' . $default_selected . '/>';
+		echo '<label for="knotch-prompt-default">How do you feel about...</label>';
 		echo '</div>';
 
-		echo '</div>'; // End knotch-topics-container
+		echo '<div>';
+		echo '<input type="radio" id="knotch-prompt-interest" name="knotch_prompt_type" value="interest"' . $interest_selected . ' />';
+		echo '<label for="knotch-prompt-interest">Are you interested in...</label>';
+		echo '</div>';
 
+		echo '</div>';
+
+		echo '</div>'; // End knotch-prompt-step
+
+		echo '<div class="knotch-preview-step">';
+		echo '<div class="knotch-step-header"><strong>Live preview of knotch widget:</strong></div>';
 		echo '<div class="knotch-widget-preview"></div>';
+		echo '</div>';
 
-		echo '<div class="knotch-bottom-shelf-container">';
 		echo '<div class="knotch-bottom-shelf">';
 		echo '<input type="checkbox" class="knotch-disable-widget" name="knotch_disable_widget" id="knotch-disable-widget" ' . $disabled_html . ' /><label for="knotch-disable-widget">Don&lsquo;t render a widget</label>';
 		echo '</div>';
-		echo '</div>';
+
+		echo '</div>'; // End knotch-wrapper
 	}
 
 	public static function addOptionsMenu() {
