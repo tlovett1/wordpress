@@ -45,7 +45,6 @@ class Knotch {
 		$disabled = get_post_meta( $post_id, '_knotch_disable_widget', true );
 		$topic_name = get_post_meta( $post_id, '_knotch_topic_name', true );
 		$topic_id = get_post_meta( $post_id, '_knotch_topic_id', true );
-		$prompt_type = get_post_meta( $post_id, '_knotch_prompt_type', true );
 
 		$disabled_html = '';
 		if ( $disabled ) {
@@ -63,7 +62,7 @@ class Knotch {
 		echo '<div class="knotch-loading-block">';
 
 		echo '<div class="knotch-loading-message">Finding topics</div>';
-		echo '<span class="spinner knotch-loading"></span>';
+		echo '<span class="knotch-loading"></span>';
 		echo '</div>';
 		echo '<div class="knotch-suggestion-message">Here are some relevant topics</div>';
 
@@ -93,6 +92,22 @@ class Knotch {
 		echo '</div>'; // End knotch-topics-container
 		echo '</div>'; // End step 1
 
+		Knotch::renderPromptStep();
+
+		echo '<div class="knotch-preview-step">';
+		echo '<div class="knotch-step-header"><strong>Live preview of knotch widget:</strong></div>';
+		echo '<div class="knotch-widget-preview"></div>';
+		echo '</div>';
+
+		echo '<div class="knotch-bottom-shelf">';
+		echo '<input type="checkbox" class="knotch-disable-widget" name="knotch_disable_widget" id="knotch-disable-widget" ' . $disabled_html . ' /><label for="knotch-disable-widget">Don&lsquo;t render a widget</label>';
+		echo '</div>';
+
+		echo '</div>'; // End knotch-wrapper
+	}
+
+	public static function renderPromptStep() {
+		$prompt_type = get_post_meta( $post_id, '_knotch_prompt_type', true );
 		echo '<div class="knotch-prompt-step">';
 		echo '<div class="knotch-step-header">2. <strong>Choose a prompt:</strong></div>';
 
@@ -117,17 +132,6 @@ class Knotch {
 		echo '</div>';
 
 		echo '</div>'; // End knotch-prompt-step
-
-		echo '<div class="knotch-preview-step">';
-		echo '<div class="knotch-step-header"><strong>Live preview of knotch widget:</strong></div>';
-		echo '<div class="knotch-widget-preview"></div>';
-		echo '</div>';
-
-		echo '<div class="knotch-bottom-shelf">';
-		echo '<input type="checkbox" class="knotch-disable-widget" name="knotch_disable_widget" id="knotch-disable-widget" ' . $disabled_html . ' /><label for="knotch-disable-widget">Don&lsquo;t render a widget</label>';
-		echo '</div>';
-
-		echo '</div>'; // End knotch-wrapper
 	}
 
 	public static function addOptionsMenu() {
