@@ -104,12 +104,12 @@ class Knotch {
 			$default_selected = '';
 			$interest_selected = ' checked="checked"';
 		}
-		echo '<div>';
+		echo '<div class="knotch-suggested-topic">';
 		echo '<input type="radio" id="knotch-prompt-default" name="knotch_prompt_type" value="default"' . $default_selected . '/>';
 		echo '<label for="knotch-prompt-default">How do you feel about...</label>';
 		echo '</div>';
 
-		echo '<div>';
+		echo '<div class="knotch-suggested-topic">';
 		echo '<input type="radio" id="knotch-prompt-interest" name="knotch_prompt_type" value="interest"' . $interest_selected . ' />';
 		echo '<label for="knotch-prompt-interest">Are you interested in...</label>';
 		echo '</div>';
@@ -249,7 +249,8 @@ class Knotch {
 
 		if ( isset( $_POST['knotch_topic_id'] ) &&
 				isset( $_POST['knotch_topic_name'] ) && $_POST['knotch_topic_name'] ) {
-			if ( $_POST['knotch_topic_id'] == 'other' ) {
+			$post_topic_id = $_POST['knotch_topic_id'];
+			if ( $post_topic_id == 'other' || $post_topic_id == 'undefined' ) {
 				delete_post_meta( $post_id, '_knotch_topic_id' );
 			} else {
 				update_post_meta( $post_id, '_knotch_topic_id', $_POST['knotch_topic_id'] );
@@ -280,7 +281,7 @@ class Knotch {
 				'topicName' => $topic_name
 			 );
 
-			if ( $topic_id ) {
+			if ( $topic_id && $topic_id !== 'undefined' ) {
 				$query_data['topicID'] = $topic_id;
 			}
 

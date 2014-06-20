@@ -1,6 +1,8 @@
 jQuery( document ).ready(function() {
 	var $ = jQuery;
 
+	var uniqueNum = 1;
+
 	var SCORE_CUTOFF = 0.15;
 	var REFRESH_TIME_MS = 30000;
 	var TAG_LISTEN_MS = 1000;
@@ -211,7 +213,7 @@ jQuery( document ).ready(function() {
 			for ( var ii = 0; ii < suggestions.length; ii++ ) {
 				var suggestion = suggestions[ii];
 
-				var htmlId = 'knotch-suggested-topic-' + suggestion.id;
+				var htmlId = 'knotch-suggested-topic-' + uniqueNum++;
 
 				var checked = '';
 				if ( ii === 0 ) {

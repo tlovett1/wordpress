@@ -85,11 +85,11 @@
 	height: 130px;
 }
 
-.knotch-topic-suggestions .knotch-suggested-topic {
+#knotch-add-widget .knotch-suggested-topic {
 	margin: 5px 0;
 }
 
-.knotch-topic-suggestions .knotch-suggested-topic label {
+#knotch-add-widget .knotch-suggested-topic label {
 	max-width: 185px;
 	overflow: hidden;
 	white-space: nowrap;
@@ -97,7 +97,7 @@
 	display: inline-block;
 }
 
-.knotch-topic-suggestions .knotch-suggested-topic input[type="radio"] {
+#knotch-add-widget .knotch-suggested-topic input[type="radio"] {
 	margin-top: 1px;
 }
 
