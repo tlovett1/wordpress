@@ -59,10 +59,12 @@ class Knotch {
 		echo '<div class="knotch-step-header">1. <strong>Select a topic:</strong></div>';
 
 		echo '<div class="knotch-topics-container">';
-		echo '<div class="knotch-loading-block">';
+		$tag_msg_style = $topic_name ? '' : ' style="display: block"';
+		$loading_icon_style = $topic_name ? '' : ' style="display: none"';
+		echo '<div class="knotch-loading-block"' . $tag_msg_style . '>';
 
-		echo '<div class="knotch-loading-message">Finding topics</div>';
-		echo '<span class="knotch-loading"></span>';
+		echo '<div class="knotch-loading-message">Add some tags to your post so we can find the topics for you!</div>';
+		echo '<span class="knotch-loading"' . $loading_icon_style . '></span>';
 		echo '</div>';
 		echo '<div class="knotch-suggestion-message">Here are some relevant topics</div>';
 
@@ -93,11 +95,7 @@ class Knotch {
 		echo '</div>'; // End step 1
 
 		Knotch::renderPromptStep();
-
-		echo '<div class="knotch-preview-step">';
-		echo '<div class="knotch-step-header"><strong>Live preview of knotch widget:</strong></div>';
-		echo '<div class="knotch-widget-preview"></div>';
-		echo '</div>';
+		Knotch::renderPreviewStep();
 
 		echo '<div class="knotch-bottom-shelf">';
 		echo '<input type="checkbox" class="knotch-disable-widget" name="knotch_disable_widget" id="knotch-disable-widget" ' . $disabled_html . ' /><label for="knotch-disable-widget">Don&lsquo;t render a widget</label>';
@@ -132,6 +130,13 @@ class Knotch {
 		echo '</div>';
 
 		echo '</div>'; // End knotch-prompt-step
+	}
+
+	public static function renderPreviewStep() {
+		echo '<div class="knotch-preview-step">';
+		echo '<div class="knotch-step-header"><strong>Live preview of knotch widget:</strong></div>';
+		echo '<div class="knotch-widget-preview"></div>';
+		echo '</div>';
 	}
 
 	public static function addOptionsMenu() {

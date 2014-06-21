@@ -188,7 +188,7 @@ jQuery( document ).ready(function() {
 			}
 
 			var src = 'https://www.knotch.it/extern/quickKnotchBox?' + $.param( param );
-			var iframe = '<iframe frameborder="0" src="' + src + '" style="width: 300px; height: 140px">';
+			var iframe = '<iframe frameborder="0" src="' + src + '" style="width: 280px; height: 140px">';
 
 			$( '.knotch-widget-preview' ).append( iframe );
 		},

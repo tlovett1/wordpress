@@ -43,8 +43,9 @@
 .knotch-step-header {
 	background-color: #2b3940;
 	color: #fff;
-	padding: 8px 0;
 	text-align: center;
+	height: 35px;
+	line-height: 35px;
 }
 
 .knotch-topics-container {
@@ -110,8 +111,8 @@
 
 .knotch-widget-preview {
 	display: block;
-	width: 300px;
-	margin: 70px auto 0;
+	width: 280px;
+	margin: 90px auto 0;
 	vertical-align: top;
 }
 
@@ -124,7 +125,7 @@
 }
 
 #knotch-add-widget .knotch-prompt-step .knotch-suggested-topic {
-	width: 180px;
+	width: 170px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -143,3 +144,10 @@
 	margin-top: 1px;
 }
 
+@media screen and (min-width: 1250px) {
+	.knotch-prompt-step .knotch-step-header,
+	.knotch-preview-step .knotch-step-header {
+		background-image: url('../images/arrow.svg');
+		background-repeat: no-repeat;
+	}
+}
