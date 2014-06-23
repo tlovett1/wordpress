@@ -135,7 +135,9 @@ class Knotch {
 	public static function renderPreviewStep() {
 		echo '<div class="knotch-preview-step">';
 		echo '<div class="knotch-step-header"><strong>Live preview of knotch widget:</strong></div>';
-		echo '<div class="knotch-widget-preview"></div>';
+		echo '<div class="knotch-widget-preview">';
+		echo '<div class="knotch-empty-preview"></div>';
+		echo '</div>';
 		echo '</div>';
 	}
 

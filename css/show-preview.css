@@ -42,7 +42,7 @@
 	display: inline-block;
 	width: 21px;
 	height: 25px;
-	background: url('../images/knotchSVG.svg') no-repeat;
+	background: url('../images/knotch-spinner.svg') no-repeat;
 	background-size: contain;
 }
 
@@ -96,6 +96,21 @@
 	width: 280px;
 	height: 140px;
 	margin: 20px auto;
+}
+
+.knotch-empty-preview {
+	display: inline-block;
+	background: url('../images/preview-empty.png') no-repeat;
+	width: 280px;
+	height: 140px;
+	background-size: cover;
+}
+
+.knotch-preview-frame {
+	width: 280px;
+	height: 140px;
+	display: inline-block;
+	border: 0;
 }
 
 .knotch-prompt-wrapper {
