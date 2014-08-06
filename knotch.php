@@ -274,7 +274,7 @@ class Knotch {
 	public static function addKnotchWidget( $content ) {
 		$post = $GLOBALS['post'];
 		if ( $post->post_type != 'post' ) {
-			return;
+			return $content;
 		}
 
 		$topic_id = get_post_meta( $post->ID, '_knotch_topic_id', true );
